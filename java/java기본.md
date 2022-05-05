@@ -63,3 +63,103 @@ public class Var {
 //heap 영역에는 int char .... 가 아닌 note라는 영역에 price / num 이라는 데이터가 저장한다.
 ~~~
 
+
+
+### Object (모든 클래스에 부모)
+
+~~~java
+Object cat = new Cat();
+//메모리에 Cat Object 둘다 올라간다. 여기서 cat은 Object클래스를 가리키고 있기에 다운 캐스팅 하여 가리키는 주소를 Object가 아니라 Cat을 바라보게 하면 Cat에 메서드를 사용 할 수 있다.
+~~~
+
+* 다운 캐스팅을 하는 이유 : 다른 클래스 타입 여러가지를 저장하고 싶을때 Object 타입으로 업캐스팅하여 저장하여 담고 다운 캐스팅하여 원래 클래스 주소를 가리켜 사용 할 수 있다.
+
+~~~java
+class 소나타 {
+	String name ="소나타";
+}
+class K5 {
+	String name ="K5";
+}
+
+public static void main (String args[]) {
+	Object [] arrObj = new Object[2];
+	arrObj[0] = new 소나타();
+	arrObj[1] = new K5();
+	
+	소나타 sonata = (소나타)arrObj[0];
+	k5 K5 = (K5)arrObj[1];
+	// 이렇게 사용 가능
+}
+~~~
+
+
+
+###  제네릭
+
+* Object를 자료형을 사용햇을때에 다운캐스팅을 해야하는 단점을 보완할 수 있다.
+
+~~~java
+class 호랑이 {
+	String name ="호랑이";
+}
+class 사자 {
+	String name = "사자";
+}
+class 동물<T> {
+	T data;
+}
+
+public static void main (String args[]){
+	동물 animal= new 동물(); // <-x 동물은 제네릭 타입이라 타입을 지정해주어야 합니다.
+	동물<호랑이> 호랑이 = new 동물<>();
+  s1.data = new 호랑이();
+	sysout(호랑이.data.name); // 호랑이 출력
+}
+	/*
+	class 동물<T> { <- T 에 호랑이가 들어오고
+	T data;  <- data 는 호랑이 타입
+	}
+	*/
+
+~~~
+
+* 와일드 카드 제네릭에 ? 어떤것을 리턴할지 몰라!
+
+~~~java
+<? extends Object> // Object를 상속하는 모든것중 하나를 리턴한다 라는 의미
+? add () {} // <- extends Object 생략되어 잇습니다.
+~~~
+
+* 예제
+
+~~~java
+class 가방<T> {
+	private T data;
+	
+	public T getDate (){
+		return this.data;
+	}
+	
+	public T setDate (data){
+	this.data = data;
+	}
+}
+
+static 가방<?> 꺼내기 (int time) { // ? 는 extneds Object 가 생략되어있다.
+	if(time == 9) {
+		축구공 s1 = new 축구공();
+		가방<축구공> b1 = new 가방<>();
+		가방.setData = s1;
+		return s1;
+	} else {
+		농구공 s2 = new 농구공();
+		가방<농구공> b2 = new 가방<>();
+		가방.setDate(s2);
+		return b2;
+	}
+}
+~~~
+
+* 와일드 카드를 사용할때는 리턴하는 object 상위에 추상클래스를 만들어 그 추상 클래스를 상속받은 object로 사용하는게 좋다
+* -> object 로 상속받은 객체이기에 object에 대한 메서드만 사용할수 있기에 리턴하는 클래스에 메서드를 사용 할 수 없기에 추상 클래스에 메서드를 오버라이드 하여서 리턴할 object들이 메서드를 재정의하여 사용하면 다운 캐스팅 없이 메서드를 사용할 수 있다.
