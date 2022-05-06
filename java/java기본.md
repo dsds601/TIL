@@ -163,3 +163,63 @@ static 가방<?> 꺼내기 (int time) { // ? 는 extneds Object 가 생략되어
 
 * 와일드 카드를 사용할때는 리턴하는 object 상위에 추상클래스를 만들어 그 추상 클래스를 상속받은 object로 사용하는게 좋다
 * -> object 로 상속받은 객체이기에 object에 대한 메서드만 사용할수 있기에 리턴하는 클래스에 메서드를 사용 할 수 없기에 추상 클래스에 메서드를 오버라이드 하여서 리턴할 object들이 메서드를 재정의하여 사용하면 다운 캐스팅 없이 메서드를 사용할 수 있다.
+
+
+
+### 버퍼 (임시 저장 공간)
+
+* Stream : 수도꼭지 ->  **물의흐름(스트림)**  전류의 흐름
+  * 1byte ->  8bit 로 끊어서 데이터를 전송함
+  * 2진수로 총 8박스 2의 7승까지 데이터를 전송 01000001 ->아스키코드 표 -> 부호화 2진수 확인후 -> 데이터 A....등등 바꿔서 출력해줍니다.
+* 컴퓨터 입장에서 input(키보드로 입력) / output (모니터 출력)
+* 데이터를 통신할때 전류가 연결되어있다 (스트림) 스트림은 8bit에 데이터를 2진수 왓다갓다 하면서 전송한다. 받을땐 2진수를 아스키코드로 변경하여 출력
+
+~~~java
+InputStream in = System.in; 
+        try {
+            int data = in.read();// 키보드에 입력한 데이터 2진수를 10진수로 변경해서 보여줌 (디코딩 )
+            System.out.println(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+// console -> A 입력 -> 인코딩하여 컴퓨터에 전송 byteStream으로 흘러들어감 ->2진수를 read메서드 통해 10진수로 디코딩 하여 출력 65
+~~~
+
+
+
+* InputStream사용했을때는 캐스팅을 했지만 간단히 변경 가능 InputStreamReader로 가능하지만 미리 공간을 지정해야합니다. 동적으로 생성 불가능
+* 위 단점을 보완한게 BufferedReader
+
+~~~java
+InputStream in = System.in;
+        InputStreamReader ir = new InputStreamReader(in); //<- 리더는 자동 디코딩 문자를 추가로 못받고 디코딩만 해줍니다.
+        try {
+            char[] data = new char[100];
+            ir.read(data);
+            System.out.println(data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+~~~
+
+
+
+* **BufferedReader** (임시저장 장치)
+  * 장점 : 숫자를 부호화로 디코딩 / 문자를 가변적으로 받을 수 있다.
+  * 양 끝단 (A - B) 버퍼의 크기를 맞춘다
+  * 버퍼의 크기가 가득차면 전송된다. (flush) ->2진수로 인코딩 되어 전송 
+    * 상대 버퍼가 비워져있어야 전송이 가능하다. Readline 메서드를 사용하면 전송받은 데이터를 다른곳으로 옮겨 데이터를 비운다.
+  * 전송된 후 버퍼가 비워지고 비워진 자리에 나머지 데이터가 갱신된다.
+  * 위에 순서 반복하여 buffer를 사용한다.
+
+~~~java
+InputStream in = System.in;
+        InputStreamReader ir = new InputStreamReader(in); //<- 리더는 자동 디코딩 문자를 추가로 못받고 디코딩만 해줍니다.
+        BufferedReader br = new BufferedReader(ir);
+        try {
+            System.out.println(br.readLine());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+~~~
+
