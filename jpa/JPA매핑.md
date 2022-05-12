@@ -295,3 +295,85 @@ class Team {
 
   
 
+* ### 상속관계 매핑
+
+  * 관계형 데이터베이스는 상속관계가 없다 객체에 상속관계가 비슷한 구조는 슈퍼타입 서브타입이라는 모델링 기법이랑 유사
+  * 상속관계 매핑이라는것은 DB의 슈퍼타입 서브타입 관계를 매핑
+  * 디비로 상속관계 전략으로는 조인전략 , 단일 테이블 전략 , 구현 클래스마다 테이블 전략
+  * **조인 전략** :상속과 제일 비슷한듯 상위에 추상클래스처럼 상위 테이블을 두고 나머지가 fk를 가져가는 방식
+    * 정규화 되어있다. , 기본적으로 이 전략을 사용한다.
+    * 객체 상속과 동일하게 Album에 상속한 값을 넣으면 상속한 테이블에 값이 들어가게된다.
+    * select시 조인해서 가져오게된다.
+
+  ~~~java
+  @Entity
+  @Inheritance(strategy = InheritanceType.JOINED) // 조인 전략 default 단일 테이블 전략
+  @DiscriminatorColumn // <- Dtype으로 값이 들어올경우 Entity명이 들어가게된다. (왠만하면 넣는게 좋다)
+  public class Item {
+  	String	name;
+  }
+  @Entity
+  @DiscriminatorValue("A") // <- 상위 테이블에 들어가는 Dtype 컬럼에 값을 변경할 경우
+  public class Album extends Item{
+  
+  }
+  @Entity
+  public class Movie extends Item{
+  
+  }
+  ~~~
+
+  
+
+  * **싱글 테이블전략 ** : 단일 테이블로 하나에 테이블에 다 들어가게되고 DTYPE으로 어떤 테이블에 값이 들어오는지 체크
+
+    * 위와 동일하고 @Inheritance(strategy = InheritanceType.SINGLE_TABLE) 변경 조인이 아니고 한 테이블에 다들어가게됨
+    * 조인할 필요도 없기에 성능상 이점이 있다. DTYPE당연 필수 @DiscriminatorColumn 없어도 값이 무조건 들어감
+
+  * **구현 클래스마다 테이블 전략** : 모두 각 테이블마다 상속한 테이블에 키값이 들어가고 상속한 엔티티에 값이 상속받은 엔티티에 들어가게된다.
+
+    * **사용하면 안됩니다.**
+    * @DiscriminatorColumn 의미가 없다 각각 테이블로 조회를 하기에 DTYPE이 필요가없다
+    * 조회를 할때 모든 엔티티를 유니온으로 묶어서 한번에 조회를 하게 된다.
+      * 성능상 효율이 좋지 않다.
+
+    ~~~java
+    @Entity
+    @Inheritance(strategy = InheritanceType.PER_TABLE) // 조인 전략 default 단일 테이블 전략
+    public abstract class Item {
+    	String	name;
+    }
+    @Entity
+    @DiscriminatorValue("A") // <- 상위 테이블에 들어가는 Dtype 컬럼에 값을 변경할 경우
+    public class Album extends Item{
+    
+    }
+    @Entity
+    public class Movie extends Item{
+    
+    }
+    ~~~
+
+  
+
+* ### @MappedSuperclass
+
+  * **상속 관계 매핑이 아닙니다.**
+  * **해당 클래스는 엔티티가 아닙니다 당연히 조회와 검색이 안됩니다.**
+  * 직접 사용할 일이 없기에 추상클래스로 만드는걸 권장합니다.
+  * 공통 매핑 정보가 필요할 때 사용 -> 상속이랑 상관이 없습니다.
+    * ex) A 테이블에 name age가 들어가고 B테이블에도 name age가 들어갈 경우 사용 , 모든 테이블에 날짜가 들어가는 경우
+
+  ~~~java
+  @MappedSuperclass // <- 매핑 정보만 받는 클래스라고 명시
+  abstract class BaseEntity{
+  	private String createdBy;
+  }
+  
+  @Entity
+  class Member extends BaseEntity{
+  
+  }
+  ~~~
+
+  
