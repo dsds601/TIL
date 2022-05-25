@@ -15,6 +15,7 @@
 [2.매핑](https://github.com/dsds601/TIL/blob/main/jpa/JPA%EB%A7%A4%ED%95%91.md)</br>
 
 ### OOP
+[1.객체지향적 자바](https://github.com/dsds601/TIL/blob/main/java/최범균님%20객체지향프로그래밍.md)</br>
 
 ### TDD
 
@@ -23,4 +24,3 @@
 ### AWS
 
 ### Kubernetes
-
